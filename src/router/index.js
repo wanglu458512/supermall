@@ -23,10 +23,6 @@ const routes = [
     path:'/category',
     component:Category
   },
-  {
-    path:'/detail/:iid',
-    component:Detail
-  }
 ]
 
 const router = new VueRouter({
