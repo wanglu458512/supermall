@@ -27,8 +27,9 @@
       activeStyle(){
         return this.isActive ?{color:this.activeColor}:{}
       }
-    },
+    },   
     props:{
+      // 父传子
       path:String,
       activeColor:{
         type:String,
