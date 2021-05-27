@@ -43,18 +43,14 @@ export default {
         this.$emit("scroll", position);
       });
     }
-    // 3.监听scroll滚到底部
+    // 3.监听scroll滚到底部，pullingUp上拉刷新
     if (this.pullUpLoad) {
       this.scroll.on('pullingUp',()=>{
         // console.log('监听滚动到底部');
         this.$emit('pullingUp')
       })
     }
-    // 3.监听上拉加载更多
-    // this.scroll.on("pullingUp", () => {
-    //   // console.log('加载更多');
-    //   this.$emit('pullingUp')
-    // });
+
   },
   methods: {
     scrollTo(x, y, time = 300) {

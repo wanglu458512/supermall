@@ -1,6 +1,6 @@
 @<template>
   <div class="goods-item" @click="itemClick">
-    <img :src="showImage" alt="" @load="imageLoad">
+    <img v-lazy="showImage" alt="" @load="imageLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">￥{{goodsItem.price}}</span>
@@ -21,7 +21,11 @@ props:{
   }
 },
 methods:{
-  // 事件总线
+  // vue中监听图片记载完成用@load
+  // 非父子组件之间通信，这里用事件总线的方式
+  // Vue.prototype.$bus = new Vue() 
+  // this.bus.emit('事件名称', 参数)
+  // this.bus.on('事件名称', 回调函数(参数))
   imageLoad(){
     this.$bus.$emit('itemImageLoad')
   },

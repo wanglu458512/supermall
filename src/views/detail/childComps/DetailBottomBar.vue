@@ -25,8 +25,9 @@
 	export default {
 		name: "DetailBottomBar",
     methods: {
-      addToCart() {
-        this.$emit('addToCart')
+      addToCart(){
+        // console.log('加入到购物车');
+        this.$emit("addToCart")
       }
     }
 	}
@@ -56,6 +57,7 @@
 
   .bar-left .text {
     font-size: 13px;
+    text-align: center;
   }
 
   .bar-left .icon {
