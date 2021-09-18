@@ -18,24 +18,25 @@
     data(){
       return{
         // isActive:false
+        // 不能写死，需要想办法知道当前的item是不是活跃的那个
       }
     },
-    computed:{
-      isActive(){
-        return this.$route.path.indexOf(this.path)!==-1
-      },
-      activeStyle(){
-        return this.isActive ?{color:this.activeColor}:{}
-      }
-    },   
     props:{
-      // 父传子
       path:String,
       activeColor:{
         type:String,
         default:'red'
       }
     },
+    computed:{
+      isActive(){
+        // /home => item1(/home) =true
+        return this.$route.path.indexOf(this.path)!==-1
+      },
+      activeStyle(){
+        return this.isActive ?{color:this.activeColor}:{}
+      }
+    },   
     methods:{
       itemClick(){
         this.$router.replace(this.path)

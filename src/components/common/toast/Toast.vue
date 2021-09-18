@@ -13,16 +13,6 @@
         isShow:false
       }
     },
-    // props:{
-    //   message:{
-    //     type:String,
-    //     default:''
-    //   },
-    //   Show:{
-    //     type:Boolean,
-    //     default:false
-    //   }
-    // },
     methods:{
       show(message,duration=2000){
         this.isShow=true;

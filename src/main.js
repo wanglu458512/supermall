@@ -8,6 +8,7 @@ import VueLazyload from 'vue-lazyload'
 Vue.config.productionTip = false
 
 Vue.prototype.$bus = new Vue()
+// 安装插件
 Vue.use(toast)
 Vue.use(VueLazyload)
 

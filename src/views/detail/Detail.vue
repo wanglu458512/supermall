@@ -1,6 +1,6 @@
 <template>
   <div id="detail">
-    <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav" />
+    <detail-nav-bar class="detail-nav" @titleClick="selectClick" ref="nav" />
     <scroll
       class="content"
       ref="scroll"
@@ -11,7 +11,7 @@
         <detail-swiper :topImages="topImages"></detail-swiper>
         <detail-base-info :goods="goods"></detail-base-info>
         <detail-shop-info :shop="shop"></detail-shop-info>
-        <!-- <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"></detail-goods-info> -->
+        <!-- <detail-goods-info :detail-info="detailInfo" @imageLoad="detailImageLoad"></detail-goods-info> -->
         <detail-param-info
           ref="params"
           :param-info="paramInfo"
@@ -48,7 +48,8 @@ import DetailRecommendInfo from "./childComps/DetailRecommendInfo";
 import DetailBottomBar from "./childComps/DetailBottomBar";
 
 import { debounce } from "common/utils";
-import {mapActions, mapGetters} from "vuex"
+import { itemLisenterMixin , backTopMixin} from "common/mixin";
+import { mapActions, mapGetters } from "vuex";
 
 import {
   getDetailId,
@@ -71,9 +72,8 @@ export default {
     DetailRecommendInfo,
     DetailBottomBar,
     Scroll,
-
-    // BackTop
   },
+  mixins: [itemLisenterMixin,backTopMixin],
   data() {
     return {
       iid: null,
@@ -85,7 +85,7 @@ export default {
       commentInfo: {},
       recommendList: [],
       themeTopYs: [],
-      getThemeTopy:null,
+      getThemeTopy: null,
     };
   },
   // 请求数据
@@ -119,18 +119,13 @@ export default {
         this.commentInfo = data.rate.list[0];
       }
     });
+    getRecommend().then((res, error) => {
+      // console.log(res);
+      if (error) return;
+      this.recommendList = res.data.list;
+    });
 
-    // this.$nextTick(()=>{
-    // DOm被渲染 但是图片没有渲染完
-    //   this.themeTopYs = [];
-    //   this.themeTopYs.push(0);
-    //   this.themeTopYs.push(this.$refs.params.$el.offsetTop);
-    //   this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
-    //   this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
-    //   console.log(this.themeTopYs); 
-    // })
-
-    // 获取主题的高度  
+    // 获取主题的高度
     this.getThemeTopy = debounce(() => {
       this.themeTopYs = [];
       this.themeTopYs.push(0);
@@ -138,35 +133,36 @@ export default {
       this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
       this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
       // this.themeTops.push(Number.MAX_VALUE)
-      this.themeTopYs.push(this.$refs.recommend.$el.offsetTop+this.$refs.recommend.$el.offsetTop)
-      console.log(this.themeTopYs); // ???
+      // this.themeTopYs.push(this.$refs.recommend.$el.offsetTop+this.$refs.recommend.$el.offsetTop)
+      // console.log(this.themeTopYs);
     }, 100);
-
-    getRecommend().then((res, error) => {
-      // console.log(res);
-      if (error) return;
-      this.recommendList = res.data.list;
+  },
+  mounted() {
+    // 使用了混入，这里就可以省略了，提炼到了mixin.js
+    // const refresh = debounce(this.$refs.scroll.refresh, 50);
+    // this.$bus.$on("itemImageLoad", () => {
+    //   refresh();
+    // });
+  },
+  destroyed() {
+    // 取消监听
+    this.$bus.$off("itemImageLoad", () => {
+      this.debounce(this.$refs.scroll.refresh, 50);
     });
   },
-
-  // mounted(){
-    // this.themeTopYs.push(0)
-  //   this.themeTopYs.push(this.$refs.params.$el.offsetTop)
-  //   console.log(this.themeTopYs);
-  // },
 
   methods: {
     // ...mapActions(['addCart']),
     // 点击标题立即滚动到对应的位置
-    titleClick(index) {
+    selectClick(index) {
       // console.log(index);
       this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 100);
     },
     // 图片加载完获取主题的高度
-    imageLoad() {
+    detailImageLoad() {
       // this.$refs.scroll.refresh();
-      const refresh=debounce(this.$refs.scroll.refresh,50)
-      refresh()
+      const refresh = debounce(this.$refs.scroll.refresh, 50);
+      refresh();
       this.getThemeTopy();
     },
     // 内容滚动 联动显示正确的标题???
@@ -175,15 +171,32 @@ export default {
       const positionY = -position.y;
       // 在positionY值和主题值之间对比
       for (let i = 0; i < this.themeTopYs.length - 1; i++) {
-        if (this.currentIndex !== i && 
-          (positionY >= this.themeTopYs[i] &&
-          positionY < this.themeTopYs[i + 1] )) {
-          this.currentIndex=i
+        if (
+          this.currentIndex !== i &&
+          positionY >= this.themeTopYs[i] &&
+          positionY < this.themeTopYs[i + 1]
+        ) {
+          this.currentIndex = i;
           this.$refs.nav.currentIndex = this.currentIndex;
         }
       }
     },
-
+    // contentScroll(position) {
+	  //   	// 监听滚动到某个主题
+    //     this._listenScrollTheme(-position.y)
+	  //   },
+    //   _listenScrollTheme(position) {
+	  //     let length = this.themeTopYs.length;
+	  //     for (let i = 0; i < length; i++) {
+		//       let iPos = this.themeTopYs[i];
+		//       if (position >= iPos && position < this.themeTopYs[i+1]) {
+		// 	      if (this.currentIndex !== i) {
+		// 		      this.currentIndex = i;
+		// 	      }
+		// 	      break;
+		//       }
+	  //     }
+    //   },
     addToCart() {
       // 获取购物车信息
       // 1.创建对象
@@ -196,15 +209,13 @@ export default {
       product.realPrice = this.goods.realPrice;
       // 3.将商品添加到购物车中(1.promise 2.mapActions映射)
       // this.$store.commit("addCart", product);
-      this.$store.dispatch('addCart', product).then(res=>{
-        // console.log(res); 
+      this.$store.dispatch("addCart", product).then((res) => {
+        // console.log(res);
         // 弹窗
-        this.$toast.show(res,2000)
+        this.$toast.show(res, 2000);
         // console.log(this.$toast);
-      })
+      });
       // this.addCart(product).then(res =>{console.log(res);}) // mapActions
-     
-
     },
   },
 };

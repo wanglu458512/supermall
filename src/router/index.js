@@ -29,7 +29,6 @@ const routes = [
     meta: {
       footShow: true, // true显示，false隐藏
     },
-
   },
   {
     path: '/home',
@@ -37,7 +36,6 @@ const routes = [
     meta: {
       footShow: true, // true显示，false隐藏
     },
-
   },
   {
     path: '/category',

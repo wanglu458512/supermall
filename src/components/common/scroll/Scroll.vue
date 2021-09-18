@@ -11,6 +11,7 @@ import BScroll from "better-scroll";
 export default {
   name: "Scroll",
   data() {
+    //防止better-scroll创建完之后在执行完mounted之后会被销毁 所以提前保存下来
     return {
       scroll: null,
       message: "haha",
@@ -27,7 +28,7 @@ export default {
     },
   },
   mounted() {
-    // 1.创建BScroll对象
+    // 1.创建BScroll对象,在这里元素的选取要采用this.$refs.ref名字，这样的话选取的就是一个唯一确定的元素了，如果用document.querySelector选取的话如果类名冲突，就会导致选取元素错误还不好排错，所以要用refs的形式。
     this.scroll = new BScroll(this.$refs.wrapper, {
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad,

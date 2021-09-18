@@ -36,11 +36,11 @@ export default {
   },
   methods: {
     titleClick: function (index) {
-      this.currentIndex = index;
+      this.currentIndex = index;// 实现点击哪一个哪一个变为红
       this.$emit("titleClick", index);
     },
     backClick() {
-      this.$router.back();
+      this.$router.back();// 返回上一个页面
     },
   },
 };

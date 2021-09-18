@@ -88,8 +88,12 @@ export default {
     this.$refs.scroll.scrollTo(0, this.saveY,0);   
   },
   deactivated() {
+    // 1.保存Y值
     this.saveY = this.$refs.scroll.getScrollY() 
-    // console.log(this.saveY);
+    // 2.取消监听
+    this.$bus.$off('itemImageLoad', () => {
+      this.debounce(this.$refs.scroll.refresh, 50)
+	})
   },
   // 网络请求数据
   created() {
@@ -110,7 +114,7 @@ export default {
   },
   methods: {
     // 事件监听
-    // 1.监听tabclick 流行 精选 热卖的点击
+    // 1.监听tabclick 流行 精选 热卖的点击,实现吸顶
     tabClick(index) {
       switch (index) {
         case 0:

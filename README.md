@@ -36,7 +36,7 @@
 - 封装GoodsList组件
 - 封装GoodsListItem组件
 
-10.对滚动进行重构: Better-Scroll
+10.对滚动进行重构: Better-Scroll,监听页面滚动，上拉加载更多
 
 11.返回顶部BackTop
 
